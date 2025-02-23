@@ -600,9 +600,9 @@ main() {
     chanage_cpuusage
     update_tcping
     add_wg_chk
-    add_ax6600_led
+    # add_ax6600_led
     set_custom_task
-    update_pw_ha_chk
+    # update_pw_ha_chk
     install_opkg_distfeeds
     update_nss_pbuf_performance
     set_build_signature
@@ -612,7 +612,7 @@ main() {
     fix_compile_coremark
     update_dnsmasq_conf
     # update_lucky
-    add_backup_info_to_sysupgrade
+    # add_backup_info_to_sysupgrade
     optimize_smartDNS
     install_feeds
     update_package "small8/sing-box"
