@@ -23,8 +23,8 @@ COMMIT_HASH=$4
 FEEDS_CONF="feeds.conf.default"
 GOLANG_REPO="https://github.com/sbwml/packages_lang_golang"
 GOLANG_BRANCH="24.x"
-THEME_SET="argon"
-LAN_ADDR="192.168.1.1"
+THEME_SET="Bootstrap"
+LAN_ADDR="192.168.11.1"
 
 clone_repo() {
     if [[ ! -d $BUILD_DIR ]]; then
@@ -65,7 +65,7 @@ update_feeds() {
     if ! grep -q "small-package" "$BUILD_DIR/$FEEDS_CONF"; then
         # 确保文件以换行符结尾
         [ -z "$(tail -c 1 "$BUILD_DIR/$FEEDS_CONF")" ] || echo "" >>"$BUILD_DIR/$FEEDS_CONF"
-        echo "src-git small8 https://github.com/kenzok8/small-package" >>"$BUILD_DIR/$FEEDS_CONF"
+        echo "src-git small8 https://github.com/kiddin9/kwrt-packages" >>"$BUILD_DIR/$FEEDS_CONF"
     fi
 
     # 添加bpf.mk解决更新报错
@@ -785,7 +785,7 @@ main() {
     add_timecontrol
     add_gecoosac
     install_feeds
-    support_fw4_adg
+    # support_fw4_adg
     update_script_priority
     remove_easytier_web
     update_geoip
