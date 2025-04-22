@@ -175,13 +175,13 @@ install_feeds() {
 
 fix_default_set() {
     # 修改默认主题
-    if [ -d "$BUILD_DIR/feeds/luci/collections/" ]; then
-        find "$BUILD_DIR/feeds/luci/collections/" -type f -name "Makefile" -exec sed -i "s/luci-theme-bootstrap/luci-theme-$THEME_SET/g" {} \;
-    fi
+    # if [ -d "$BUILD_DIR/feeds/luci/collections/" ]; then
+    #     find "$BUILD_DIR/feeds/luci/collections/" -type f -name "Makefile" -exec sed -i "s/luci-theme-bootstrap/luci-theme-$THEME_SET/g" {} \;
+    # fi
 
-    if [ -d "$BUILD_DIR/feeds/small8/luci-theme-argon" ]; then
-        find "$BUILD_DIR/feeds/small8/luci-theme-argon" -type f -name "cascade*" -exec sed -i 's/--bar-bg/--primary/g' {} \;
-    fi
+    # if [ -d "$BUILD_DIR/feeds/small8/luci-theme-argon" ]; then
+    #     find "$BUILD_DIR/feeds/small8/luci-theme-argon" -type f -name "cascade*" -exec sed -i 's/--bar-bg/--primary/g' {} \;
+    # fi
 
     install -Dm755 "$BASE_PATH/patches/990_set_argon_primary" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/990_set_argon_primary"
     install -Dm755 "$BASE_PATH/patches/991_set_nf_conntrack_max" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/991_set_nf_conntrack_max"
