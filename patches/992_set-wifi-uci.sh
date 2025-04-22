@@ -35,7 +35,6 @@ EOF
 
 jdc_ax1800_pro_wifi_cfg() {
     configure_wifi 0 149 HE80 20 'ARI' '123321ww'
-    configure_wifi 1 1 HE20 20 'ARI_MG' '123321ww'
 }
 
 jdc_ax6600_wifi_cfg() {
