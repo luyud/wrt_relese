@@ -174,16 +174,17 @@ install_feeds() {
 }
 
 fix_default_set() {
-    # # 修改默认主题
-    # if [ -d "$BUILD_DIR/feeds/luci/collections/" ]; then
-    #     find "$BUILD_DIR/feeds/luci/collections/" -type f -name "Makefile" -exec sed -i "s/luci-theme-bootstrap/luci-theme-$THEME_SET/g" {} \;
-    # fi
+    # 修改默认主题
+    if [ -d "$BUILD_DIR/feeds/luci/collections/" ]; then
+        find "$BUILD_DIR/feeds/luci/collections/" -type f -name "Makefile" -exec sed -i "s/luci-theme-bootstrap/luci-theme-$THEME_SET/g" {} \;
+    fi
 
-    # if [ -d "$BUILD_DIR/feeds/small8/luci-theme-argon" ]; then
-    #     find "$BUILD_DIR/feeds/small8/luci-theme-argon" -type f -name "cascade*" -exec sed -i 's/--bar-bg/--primary/g' {} \;
-    # fi
+    if [ -d "$BUILD_DIR/feeds/small8/luci-theme-argon" ]; then
+        find "$BUILD_DIR/feeds/small8/luci-theme-argon" -type f -name "cascade*" -exec sed -i 's/--bar-bg/--primary/g' {} \;
+    fi
 
-    # install -Dm755 "$BASE_PATH/patches/99_set_argon_primary" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/99_set_argon_primary"
+    install -Dm755 "$BASE_PATH/patches/990_set_argon_primary" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/990_set_argon_primary"
+    install -Dm755 "$BASE_PATH/patches/991_set_nf_conntrack_max" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/991_set_nf_conntrack_max"
 
     if [ -f "$BUILD_DIR/package/emortal/autocore/files/tempinfo" ]; then
         if [ -f "$BASE_PATH/patches/tempinfo" ]; then
@@ -765,10 +766,9 @@ main() {
     # fix_mkpkg_format_invalid
     chanage_cpuusage
     update_tcping
-    add_wg_chk
     # add_ax6600_led
     set_custom_task
-    # update_pw_ha_chk
+    # update_pw
     install_opkg_distfeeds
     update_nss_pbuf_performance
     set_build_signature
@@ -777,7 +777,6 @@ main() {
     update_menu_location
     fix_compile_coremark
     update_dnsmasq_conf
-    # update_lucky
     # add_backup_info_to_sysupgrade
     optimize_smartDNS
     update_mosdns_deconfig
