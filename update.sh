@@ -73,11 +73,11 @@ update_feeds() {
         touch "$BUILD_DIR/include/bpf.mk"
     fi
 
-    # 切换nss-packages源
-    #if grep -q "nss_packages" "$BUILD_DIR/$FEEDS_CONF"; then
-    #    sed -i '/nss_packages/d' "$BUILD_DIR/$FEEDS_CONF"
-    #    echo "src-git nss_packages https://github.com/ZqinKing/nss-packages.git" >>"$BUILD_DIR/$FEEDS_CONF"
-    #fi
+    # 切换packages源到默认
+    if grep -q "packages" "$BUILD_DIR/$FEEDS_CONF"; then
+       sed -i '/packages/d' "$BUILD_DIR/$FEEDS_CONF"
+       echo "src-git packages https://git.openwrt.org/feed/packages.git" >>"$BUILD_DIR/$FEEDS_CONF"
+    fi
 
     # 更新 feeds
     ./scripts/feeds clean
@@ -155,7 +155,7 @@ install_small8() {
         luci-app-store quickstart luci-app-quickstart luci-app-istorex luci-app-cloudflarespeedtest \
         luci-theme-argon netdata luci-app-netdata lucky luci-app-lucky luci-app-openclash luci-app-homeproxy \
         luci-app-amlogic nikki luci-app-nikki tailscale luci-app-tailscale oaf open-app-filter luci-app-oaf \
-        easytier luci-app-easytier msd_lite luci-app-msd_lite
+        easytier luci-app-easytier msd_lite luci-app-msd_lite iperf3 luci-app-iperf3-server luci-app-advancedplus
 }
 
 install_feeds() {
