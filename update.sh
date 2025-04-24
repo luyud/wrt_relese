@@ -75,7 +75,7 @@ update_feeds() {
 
     # 切换packages源到默认
     if grep -q "src-git packages" "$BUILD_DIR/$FEEDS_CONF"; then
-       sed -i '/src-git packages/d' "$BUILD_DIR/$FEEDS_CONF"
+       sed -i '/^src-git packages/d' "$BUILD_DIR/$FEEDS_CONF"
        echo "src-git packages https://git.openwrt.org/feed/packages.git" >>"$BUILD_DIR/$FEEDS_CONF"
     fi
 
