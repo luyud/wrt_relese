@@ -60,6 +60,10 @@ reset_feeds_conf() {
 update_feeds() {
     # 删除注释行
     sed -i '/^#/d' "$BUILD_DIR/$FEEDS_CONF"
+    # 删除 telephony
+    sed -i "/telephony/d" "$BUILD_DIR/$FEEDS_CONF"
+    sed -i "/luci/d" "$BUILD_DIR/$FEEDS_CONF"
+    echo "src-git luci https://github.com/openwrt/luci.git" >>"$BUILD_DIR/$FEEDS_CONF"
 
     # 检查并添加 small-package 源
     if ! grep -q "small-package" "$BUILD_DIR/$FEEDS_CONF"; then
