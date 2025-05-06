@@ -25,6 +25,7 @@ GOLANG_REPO="https://github.com/sbwml/packages_lang_golang"
 GOLANG_BRANCH="24.x"
 THEME_SET="Bootstrap"
 LAN_ADDR="192.168.11.1"
+HOST_NAME="ARI-CO"
 
 clone_repo() {
     if [[ ! -d $BUILD_DIR ]]; then
@@ -62,8 +63,6 @@ update_feeds() {
     sed -i '/^#/d' "$BUILD_DIR/$FEEDS_CONF"
     # 删除 telephony
     sed -i "/telephony/d" "$BUILD_DIR/$FEEDS_CONF"
-    sed -i "/luci/d" "$BUILD_DIR/$FEEDS_CONF"
-    echo "src-git luci https://github.com/openwrt/luci.git" >>"$BUILD_DIR/$FEEDS_CONF"
 
     # 检查并添加 small-package 源
     if ! grep -q "small-package" "$BUILD_DIR/$FEEDS_CONF"; then
@@ -94,6 +93,8 @@ remove_unwanted_packages() {
         "luci-app-ssr-plus" "luci-app-vssr" "luci-theme-argon" "luci-app-daed" "luci-app-dae"
         "luci-app-alist" "luci-app-argon-config" "luci-app-homeproxy" "luci-app-haproxy-tcp"
         "luci-app-openclash" "luci-app-mihomo" "luci-app-appfilter" "luci-app-msd_lite"
+        "luci-app-nikki" "luci-app-tailscale" "luci-app-advancedplus" "luci-app-iperf3-server"
+        "luci-app-upnp" 
     )
     local packages_net=(
         "haproxy" "xray-core" "xray-plugin" "dns2socks" "alist" "hysteria"
@@ -101,7 +102,7 @@ remove_unwanted_packages() {
         "sing-box" "v2ray-core" "v2ray-geodata" "v2ray-plugin" "tuic-client"
         "chinadns-ng" "ipt2socks" "tcping" "trojan-plus" "simple-obfs"
         "shadowsocksr-libev" "dae" "daed" "mihomo" "geoview" "tailscale" "open-app-filter"
-        "msd_lite"
+        "msd_lite" "nikki" "iperf3" 
     )
     local small8_packages=(
         "ppp" "firewall" "dae" "daed" "daed-next" "libnftnl" "nftables" "dnsmasq"
@@ -151,7 +152,7 @@ install_small8() {
         luci-app-store quickstart luci-app-quickstart luci-app-istorex luci-app-cloudflarespeedtest \
         luci-theme-argon netdata luci-app-netdata lucky luci-app-lucky luci-app-openclash luci-app-homeproxy \
         luci-app-amlogic nikki luci-app-nikki tailscale luci-app-tailscale oaf open-app-filter luci-app-oaf \
-        easytier luci-app-easytier msd_lite luci-app-msd_lite iperf3 luci-app-iperf3-server luci-app-advancedplus
+        easytier luci-app-easytier msd_lite luci-app-msd_lite iperf3 luci-app-iperf3-server luci-app-advancedplus luci-app-upnp
 }
 
 install_feeds() {
@@ -235,6 +236,7 @@ update_default_lan_addr() {
     local CFG_PATH="$BUILD_DIR/package/base-files/files/bin/config_generate"
     if [ -f $CFG_PATH ]; then
         sed -i 's/192\.168\.[0-9]*\.[0-9]*/'$LAN_ADDR'/g' $CFG_PATH
+        sed -i 's/LibWrt/'$HOST_NAME'/g' $CFG_PATH
     fi
 }
 
