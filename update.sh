@@ -76,6 +76,12 @@ update_feeds() {
         touch "$BUILD_DIR/include/bpf.mk"
     fi
 
+    # 恢复packages源到默认
+    if grep -q "src-git packages" "$BUILD_DIR/$FEEDS_CONF"; then
+       sed -i '/^src-git packages/d' "$BUILD_DIR/$FEEDS_CONF"
+       echo "src-git packages https://git.openwrt.org/feed/packages.git" >>"$BUILD_DIR/$FEEDS_CONF"
+    fi
+
     # 切换nss-packages源
     #if grep -q "nss_packages" "$BUILD_DIR/$FEEDS_CONF"; then
     #    sed -i '/nss_packages/d' "$BUILD_DIR/$FEEDS_CONF"
