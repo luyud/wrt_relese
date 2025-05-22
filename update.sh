@@ -76,11 +76,12 @@ update_feeds() {
         touch "$BUILD_DIR/include/bpf.mk"
     fi
 
-    # 切换packages源到默认
-    if grep -q "src-git packages" "$BUILD_DIR/$FEEDS_CONF"; then
-       sed -i '/^src-git packages/d' "$BUILD_DIR/$FEEDS_CONF"
-       echo "src-git packages https://git.openwrt.org/feed/packages.git" >>"$BUILD_DIR/$FEEDS_CONF"
-    fi
+    # 切换nss-packages源
+    #if grep -q "nss_packages" "$BUILD_DIR/$FEEDS_CONF"; then
+    #    sed -i '/nss_packages/d' "$BUILD_DIR/$FEEDS_CONF"
+    #    [ -z "$(tail -c 1 "$BUILD_DIR/$FEEDS_CONF")" ] || echo "" >>"$BUILD_DIR/$FEEDS_CONF"
+    #    echo "src-git nss_packages https://github.com/ZqinKing/nss-packages.git" >>"$BUILD_DIR/$FEEDS_CONF"
+    #fi
 
     # 更新 feeds
     ./scripts/feeds clean
@@ -766,7 +767,7 @@ main() {
     update_default_lan_addr
     remove_something_nss_kmod
     update_affinity_script
-    fix_build_for_openssl
+    # fix_build_for_openssl
     update_ath11k_fw
     # fix_mkpkg_format_invalid
     chanage_cpuusage
