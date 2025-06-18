@@ -109,10 +109,10 @@ remove_unwanted_packages() {
         "sing-box" "v2ray-core" "v2ray-geodata" "v2ray-plugin" "tuic-client"
         "chinadns-ng" "ipt2socks" "tcping" "trojan-plus" "simple-obfs"
         "shadowsocksr-libev" "dae" "daed" "mihomo" "geoview" "tailscale" "open-app-filter"
-        "msd_lite" "nikki" 
+        "msd_lite"
     )
     local packages_utils=(
-        "dockerd" "docker"
+        "cups"
     )
     local small8_packages=(
         "ppp" "firewall" "dae" "daed" "daed-next" "libnftnl" "nftables" "dnsmasq"
@@ -130,6 +130,12 @@ remove_unwanted_packages() {
     for pkg in "${packages_net[@]}"; do
         if [[ -d ./feeds/packages/net/$pkg ]]; then
             \rm -rf ./feeds/packages/net/$pkg
+        fi
+    done
+
+    for pkg in "${packages_utils[@]}"; do
+        if [[ -d ./feeds/packages/utils/$pkg ]]; then
+            \rm -rf ./feeds/packages/utils/$pkg
         fi
     done
 
@@ -170,7 +176,7 @@ install_small8() {
         luci-app-store quickstart luci-app-quickstart luci-app-istorex luci-app-cloudflarespeedtest \
         luci-theme-argon netdata luci-app-netdata lucky luci-app-lucky luci-app-openclash luci-app-homeproxy \
         luci-app-amlogic nikki luci-app-nikki tailscale luci-app-tailscale oaf open-app-filter luci-app-oaf \
-        easytier luci-app-easytier msd_lite luci-app-msd_lite iperf3 luci-app-iperf3-server luci-app-advancedplus luci-app-upnp
+        easytier luci-app-easytier msd_lite luci-app-msd_lite cups luci-app-cupsd iperf3 luci-app-iperf3-server luci-app-advancedplus luci-app-upnp
 }
 
 install_feeds() {
@@ -852,8 +858,8 @@ main() {
     update_geoip
     update_package "runc" "releases" "v1.2.6"
     update_package "containerd" "releases" "v1.7.27"
-    update_package "docker" "tags"
-    update_package "dockerd"
+    update_package "docker" "tags" "v28.2.2"
+    update_package "dockerd" "releases" "v28.2.2"
     # update_package "xray-core"
     # update_proxy_app_menu_location
     # update_dns_app_menu_location
