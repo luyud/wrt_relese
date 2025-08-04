@@ -865,6 +865,16 @@ update_argon() {
     echo "Argon 更新完毕。"
 }
 
+update_rpcsvc_proto_patch() {
+    local source_makefile="$BUILD_DIR/feeds/packages/rpcsvc-proto/Makefile"
+    local patch_makefile="$BASE_PATH/patches/rpcsvc-proto.mk"
+
+    # 检查源 Makefile 是否存在
+    if [ -f "$source_makefile" ]; then
+        install -Dm644 "$patch_makefile" "$source_makefile"
+    fi
+}
+
 main() {
     clone_repo
     clean_up
@@ -910,6 +920,7 @@ main() {
     set_nginx_default_config
     update_uwsgi_limit_as
     update_argon
+    update_rpcsvc_proto_patch
     install_feeds
     support_fw4_adg
     update_script_priority
