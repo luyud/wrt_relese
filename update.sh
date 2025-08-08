@@ -95,11 +95,10 @@ update_feeds() {
 
 remove_unwanted_packages() {
     local luci_packages=(
-        "luci-app-passwall" "luci-app-smartdns" "luci-app-ddns-go" "luci-app-rclone"
-        "luci-app-ssr-plus" "luci-app-vssr" "luci-theme-argon" "luci-app-daed" "luci-app-dae"
-        "luci-app-alist" "luci-app-argon-config" "luci-app-homeproxy" "luci-app-haproxy-tcp"
-        "luci-app-openclash" "luci-app-mihomo" "luci-app-appfilter" "luci-app-msd_lite"
-        "luci-app-nikki" "luci-app-tailscale" "luci-app-advancedplus" "luci-app-iperf3-server"
+        "luci-app-passwall" "luci-app-ddns-go" "luci-app-rclone" "luci-app-ssr-plus"
+        "luci-app-vssr" "luci-app-daed" "luci-app-dae" "luci-app-alist" "luci-app-homeproxy"
+        "luci-app-haproxy-tcp" "luci-app-openclash" "luci-app-mihomo" "luci-app-appfilter"
+        "luci-app-msd_lite" "luci-app-nikki" "luci-app-tailscale" "luci-app-advancedplus" "luci-app-iperf3-server"
         "luci-app-upnp"
     )
     local packages_net=(
@@ -296,6 +295,28 @@ update_affinity_script() {
     fi
 }
 
+# 通用函数，用于修正 Makefile 中的哈希值
+fix_hash_value() {
+    local makefile_path="$1"
+    local old_hash="$2"
+    local new_hash="$3"
+    local package_name="$4"
+
+    if [ -f "$makefile_path" ]; then
+        sed -i "s/$old_hash/$new_hash/g" "$makefile_path"
+        echo "已修正 $package_name 的哈希值。"
+    fi
+}
+
+# 应用所有哈希值修正
+apply_hash_fixes() {
+    fix_hash_value \
+        "$BUILD_DIR/package/feeds/packages/smartdns/Makefile" \
+        "150019a03f1ec2e4b5849740a72badf5ea094d5754bd59dd30119523a3ce9398" \
+        "abcb3d3bfa99297dfb92b8fb4f1f78d0948a01281fdfc76c9c460a2c3d5c7f79" \
+        "smartdns"
+}
+
 update_ath11k_fw() {
     local makefile="$BUILD_DIR/package/firmware/ath11k-firmware/Makefile"
     local new_mk="$BASE_PATH/patches/ath11k_fw.mk"
@@ -406,13 +427,18 @@ EOF
     chmod +x "$sh_dir/custom_task"
 }
 
-# 清理 Passwall 的 chnlist 规则文件
-clear_passwall_chnlist() {
+# 应用 Passwall 相关调整
+apply_passwall_tweaks() {
+    # 清理 Passwall 的 chnlist 规则文件
     local chnlist_path="$BUILD_DIR/feeds/small8/luci-app-passwall/root/usr/share/passwall/rules/chnlist"
-
-    # 如果 chnlist 文件存在，则清空其内容
     if [ -f "$chnlist_path" ]; then
         > "$chnlist_path"
+    fi
+
+    # 调整 Xray 最大 RTT
+    local xray_util_path="$BUILD_DIR/feeds/small8/luci-app-passwall/luasrc/passwall/util_xray.lua"
+    if [ -f "$xray_util_path" ]; then
+        sed -i 's/maxRTT = "1s"/maxRTT = "2s"/g' "$xray_util_path"
     fi
 }
 
@@ -851,40 +877,20 @@ remove_tweaked_packages() {
 }
 
 update_argon() {
-    local repo_url="https://github.com/sbwml/luci-theme-argon.git"
-    local repo_branch="openwrt-24.10"
-    local tmp_dir=$(mktemp -d)
+    local repo_url="https://github.com/jjm2473/luci-theme-argon.git"
     local dst_theme_path="$BUILD_DIR/feeds/luci/themes/luci-theme-argon"
-    local dst_app_path="$BUILD_DIR/feeds/luci/applications/luci-app-argon-config"
+    local tmp_dir=$(mktemp -d)
 
-    echo "正在更新 argon 主题和插件..."
+    echo "正在更新 argon 主题..."
 
-    git clone --depth 1 -b "$repo_branch" "$repo_url" "$tmp_dir"
+    git clone --depth 1 "$repo_url" "$tmp_dir"
 
-    rm -rf "$dst_theme_path" "$dst_app_path"
+    rm -rf "$dst_theme_path"
+    rm -rf "$tmp_dir/.git"
+    mv "$tmp_dir" "$dst_theme_path"
 
-    if [ -d "$tmp_dir/luci-theme-argon" ]; then
-        mv "$tmp_dir/luci-theme-argon" "$dst_theme_path"
-        echo "luci-theme-argon 更新完成"
-    fi
-
-    if [ -d "$tmp_dir/luci-app-argon-config" ]; then
-        mv "$tmp_dir/luci-app-argon-config" "$dst_app_path"
-        echo "luci-app-argon-config 更新完成"
-    fi
-
-    rm -rf "$tmp_dir"
+    echo "luci-theme-argon 更新完成"
     echo "Argon 更新完毕。"
-}
-
-update_rpcsvc_proto_patch() {
-    local source_makefile="$BUILD_DIR/feeds/packages/rpcsvc-proto/Makefile"
-    local patch_makefile="$BASE_PATH/patches/rpcsvc-proto.mk"
-
-    # 检查源 Makefile 是否存在
-    if [ -f "$source_makefile" ]; then
-        install -Dm644 "$patch_makefile" "$source_makefile"
-    fi
 }
 
 main() {
@@ -910,7 +916,7 @@ main() {
     update_tcping
     # add_ax6600_led
     set_custom_task
-    clear_passwall_chnlist
+    apply_passwall_tweaks
     install_opkg_distfeeds
     update_nss_pbuf_performance
     set_build_signature
@@ -932,9 +938,9 @@ main() {
     set_nginx_default_config
     update_uwsgi_limit_as
     update_argon
-    update_rpcsvc_proto_patch
     install_feeds
-    # support_fw4_adg
+    apply_hash_fixes # 调用哈希修正函数
+    support_fw4_adg
     update_script_priority
     fix_easytier
     update_geoip
