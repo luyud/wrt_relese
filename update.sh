@@ -101,15 +101,16 @@ remove_unwanted_packages() {
         "luci-app-passwall" "luci-app-ddns-go" "luci-app-rclone" "luci-app-ssr-plus"
         "luci-app-vssr" "luci-app-daed" "luci-app-dae" "luci-app-alist" "luci-app-homeproxy"
         "luci-app-haproxy-tcp" "luci-app-openclash" "luci-app-mihomo" "luci-app-appfilter"
-        "luci-app-msd_lite" "luci-app-nikki" "luci-app-tailscale" "luci-app-advancedplus" "luci-app-iperf3-server"
-        "luci-app-upnp"
+        "luci-app-msd_lite"
+        "luci-app-nikki" "luci-app-tailscale" "luci-app-advancedplus" "luci-app-iperf3-server" "luci-app-upnp"
     )
     local packages_net=(
         "haproxy" "xray-core" "xray-plugin" "dns2socks" "alist" "hysteria"
         "mosdns" "adguardhome" "ddns-go" "naiveproxy" "shadowsocks-rust"
         "sing-box" "v2ray-core" "v2ray-geodata" "v2ray-plugin" "tuic-client"
         "chinadns-ng" "ipt2socks" "tcping" "trojan-plus" "simple-obfs" "shadowsocksr-libev" 
-        "dae" "daed" "mihomo" "geoview" "tailscale" "open-app-filter" "msd_lite" "nikki"
+        "dae" "daed" "mihomo" "geoview" "tailscale" "open-app-filter" "msd_lite"
+        "nikki"
     )
     local packages_utils=(
         "cups"
@@ -999,7 +1000,7 @@ main() {
     # fix_mkpkg_format_invalid
     change_cpuusage
     update_tcping
-    # add_ax6600_led
+    add_ax6600_led
     set_custom_task
     apply_passwall_tweaks
     install_opkg_distfeeds
