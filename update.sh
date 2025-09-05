@@ -63,25 +63,17 @@ reset_feeds_conf() {
 update_feeds() {
     # 删除注释行
     sed -i '/^#/d' "$BUILD_DIR/$FEEDS_CONF"
-    # 删除 telephony
-    sed -i "/telephony/d" "$BUILD_DIR/$FEEDS_CONF"
 
     # 检查并添加 small-package 源
     if ! grep -q "small-package" "$BUILD_DIR/$FEEDS_CONF"; then
         # 确保文件以换行符结尾
         [ -z "$(tail -c 1 "$BUILD_DIR/$FEEDS_CONF")" ] || echo "" >>"$BUILD_DIR/$FEEDS_CONF"
-        echo "src-git small8 https://github.com/kiddin9/kwrt-packages" >>"$BUILD_DIR/$FEEDS_CONF"
+        echo "src-git small8 https://github.com/kenzok8/small-package" >>"$BUILD_DIR/$FEEDS_CONF"
     fi
 
     # 添加bpf.mk解决更新报错
     if [ ! -f "$BUILD_DIR/include/bpf.mk" ]; then
         touch "$BUILD_DIR/include/bpf.mk"
-    fi
-
-    # 恢复packages源到默认
-    if grep -q "src-git packages" "$BUILD_DIR/$FEEDS_CONF"; then
-       sed -i '/^src-git packages/d' "$BUILD_DIR/$FEEDS_CONF"
-       echo "src-git packages https://git.openwrt.org/feed/packages.git" >>"$BUILD_DIR/$FEEDS_CONF"
     fi
 
     # 切换nss-packages源
@@ -477,11 +469,11 @@ install_opkg_distfeeds() {
 
     if [ -d "$emortal_def_dir" ] && [ ! -f "$distfeeds_conf" ]; then
         cat <<'EOF' >"$distfeeds_conf"
-src/gz openwrt_base https://dl.openwrt.ai/packages-24.10/aarch64_cortex-a53/base/
-src/gz openwrt_luci https://dl.openwrt.ai/packages-24.10/aarch64_cortex-a53/luci/
-src/gz openwrt_packages https://dl.openwrt.ai/packages-24.10/aarch64_cortex-a53/packages/
-src/gz openwrt_routing https://dl.openwrt.ai/packages-24.10/aarch64_cortex-a53/routing/
-src/gz openwrt_telephony https://dl.openwrt.ai/packages-24.10/aarch64_cortex-a53/kiddin9/
+src/gz openwrt_base https://downloads.immortalwrt.org/releases/24.10-SNAPSHOT/packages/aarch64_cortex-a53/base/
+src/gz openwrt_luci https://downloads.immortalwrt.org/releases/24.10-SNAPSHOT/packages/aarch64_cortex-a53/luci/
+src/gz openwrt_packages https://downloads.immortalwrt.org/releases/24.10-SNAPSHOT/packages/aarch64_cortex-a53/packages/
+src/gz openwrt_routing https://downloads.immortalwrt.org/releases/24.10-SNAPSHOT/packages/aarch64_cortex-a53/routing/
+src/gz openwrt_telephony https://downloads.immortalwrt.org/releases/24.10-SNAPSHOT/packages/aarch64_cortex-a53/telephony/
 EOF
 
         sed -i "/define Package\/default-settings\/install/a\\
