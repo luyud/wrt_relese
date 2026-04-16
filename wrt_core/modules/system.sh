@@ -287,7 +287,7 @@ update_menu_location() {
 
     local tailscale_path="$BUILD_DIR/feeds/small8/luci-app-tailscale/root/usr/share/luci/menu.d/luci-app-tailscale.json"
     if [ -d "$(dirname "$tailscale_path")" ] && [ -f "$tailscale_path" ]; then
-        sed -i 's/services/vpn/g' "$tailscale_path"
+        sed -i 's|"admin/services/|"admin/vpn/|g' "$tailscale_path"
     fi
 }
 

@@ -17,3 +17,10 @@ if uci show dropbear | grep -q "DirectInterface"; then
     uci commit dropbear
     /etc/init.d/dropbear restart
 fi
+
+# 设置主机名
+uci set system.@system[0].hostname='ARI-CO'
+uci commit system
+
+# 设置默认密码
+(echo "123321ww"; echo "123321ww") | passwd root
