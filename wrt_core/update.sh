@@ -23,8 +23,12 @@ fi
 FEEDS_CONF="feeds.conf.default"
 GOLANG_REPO="https://github.com/sbwml/packages_lang_golang"
 GOLANG_BRANCH="26.x"
-THEME_SET="argon"
-LAN_ADDR="192.168.1.1"
+THEME_SET="bootstrap"
+LAN_ADDR="192.168.11.1"
+
+if [[ "${WRT_IS_X86_64:-0}" == "1" ]]; then
+    LAN_ADDR="10.0.0.1"
+fi
 
 SCRIPT_DIR=$(cd $(dirname $0) && pwd)
 BASE_PATH=${BASE_PATH:-$SCRIPT_DIR}
