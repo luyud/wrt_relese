@@ -1,12 +1,27 @@
 #!/bin/sh
 
 board_name=$(cat /tmp/sysinfo/board_name)
+wifi_mode=${1:-}
 hotplug_mode=0
 wifi_config_changed=0
-[ "${1:-}" = "--hotplug" ] && hotplug_mode=1
+
+case "$wifi_mode" in
+	--hotplug) hotplug_mode=1 ;;
+	--generated-radios)
+		hotplug_mode=1
+		shift
+		generated_radios="$*"
+		;;
+esac
 
 wifi_radio_ready() {
 	local radio=$1
+	if [ "$wifi_mode" = "--generated-radios" ]; then
+		case " $generated_radios " in
+			*" radio${radio} "*) ;;
+			*) return 1 ;;
+		esac
+	fi
 	[ "$(uci -q get wireless.radio${radio}.type)" = "mac80211" ] &&
 		[ "$(uci -q get wireless.default_radio${radio}.device)" = "radio${radio}" ]
 }
@@ -23,7 +38,7 @@ configure_wifi() {
 		return 0
 	fi
 	local now_encryption=$(uci -q get wireless.default_radio${radio}.encryption)
-	if [ -n "$now_encryption" ] && [ "$now_encryption" != "none" ]; then
+	if [ "$wifi_mode" != "--generated-radios" ] && [ -n "$now_encryption" ] && [ "$now_encryption" != "none" ]; then
 		local now_ssid=$(uci -q get wireless.default_radio${radio}.ssid)
 		local now_key=$(uci -q get wireless.default_radio${radio}.key)
 		local use_local_defaults=0
@@ -82,11 +97,13 @@ configure_wifi7() {
 	fi
 	local now_encryption=$(uci -q get wireless.default_radio${radio}.encryption)
 	local bandmode=$(uci -q get wireless.radio${radio}.band)
-	if [ "$bandmode" = "6g" ] && [ "$now_encryption" = "$encryption" ]; then
-		return 0
-	fi
-	if [ "$bandmode" != "6g" ] && [ -n "$now_encryption" ] && [ "$now_encryption" != "none" ]; then
-		return 0
+	if [ "$wifi_mode" != "--generated-radios" ]; then
+		if [ "$bandmode" = "6g" ] && [ "$now_encryption" = "$encryption" ]; then
+			return 0
+		fi
+		if [ "$bandmode" != "6g" ] && [ -n "$now_encryption" ] && [ "$now_encryption" != "none" ]; then
+			return 0
+		fi
 	fi
 	uci -q batch <<EOF
 set wireless.radio${radio}.channel="${channel}"

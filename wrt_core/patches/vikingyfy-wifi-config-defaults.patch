@@ -1,0 +1,30 @@
+--- a/package/network/config/wifi-scripts/files/lib/wifi/mac80211.uc
++++ b/package/network/config/wifi-scripts/files/lib/wifi/mac80211.uc
+@@ -66,6 +66,7 @@
+
+ 	let idx = 0;
+ 	let commit;
++	let generated_radios = [];
+
+ 	let path = '/etc/config/wireless';
+ 	let cfg = uci.cursor();
+@@ -204,6 +205,9 @@
+ 				ieee80211w: sae ? '2' : null,
+ 				key: defaults?.key || (ap_defaults && preset ? preset.key : '12345678'), disabled: needs_country ? '1' : '0'
+ 			});
++			// Preserve explicit board and factory SSID/key settings.
++			if (!defaults?.ssid && !preset)
++				push(generated_radios, name);
+ 			config[name] = {};
+ 			commit = true;
+ 		}
+@@ -218,6 +222,9 @@
+ 				unlink(notify_file);
+ 			die('Cannot commit newly discovered radios');
+ 		}
++		// Apply defaults under the configuration lock before notifying netifd.
++		if (length(generated_radios) && system([ '/usr/libexec/992_set-wifi-uci.sh', '--generated-radios', ...generated_radios ]))
++			warn('Cannot apply device Wi-Fi defaults\n');
+ 	}
+
+ 	return 0;
